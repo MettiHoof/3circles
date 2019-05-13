@@ -1,1 +1,14 @@
-HotSpot Analysis
+<H1>HotSpot Analysis</H1>
+Data temporal extension
+Min date: 2017-04
+Max date: 2019-03
+
+We have 7,650,994 pairs locations. It has directionality, as you can find in one row Venue_i -> Venue_j and in a diferent row
+Venue_j->Venue_i , i\neq j
+
+We based our HotSpots in the number of check-in that a pair have during the whole period . First, we group our pairs by
+frequency of ocurrence and them sum the check-ins for each group (see example in notebook), obtaining 4,834,661 pairs.
+As these data have quite a fat tail, we make a subset from all the pairs observed at least 10 times in these 23 months,
+rd the value of sum(check-in). These gave us a set of 46,686 pairs.
+
+The first ten pairs represents micro-spatial movements
