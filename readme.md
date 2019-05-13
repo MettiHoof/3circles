@@ -17,7 +17,7 @@ Recap second session: we will be focusing on:
 2. Sparsing the category tree and adding it to the data --Done , see Metti/data/category_tree
 3. Describing the coverage of some of the first order categories (such as Food) with relation to Natalia's firm dataset. I guess some maps at lsoa or oa will be sufficient? (Natalia)
 4.Transition matrices by seasonality (Antonia: Done! The daily patterns look interesting, there are some differences between cities, in particular Istanbul, Jakarta and Tokyo seems to have their own patterns. To measure how concentrated or dispersed are the matrices could be also interesting! No seasonal patterns).
-5. Movement hotspot analysis (Roberto) - (1/2) Still need to define hotspots by time of the day. But as the last email, don't know how robust this will be. I'll do it anyway...
+5. Movement hotspot analysis (Roberto) - (1/2) Still need to define hotspots by time of the day. But as the last email, don't know how robust this will be.
 
 Considering the writing, there is an overleaf document that lives here: 
 https://www.overleaf.com/7764458452rsrkytpfwzzq
