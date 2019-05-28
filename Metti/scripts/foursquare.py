@@ -28,6 +28,8 @@ import numpy as np #For matrix handling
 import geopandas as gpd #For shapefile and geodatabase handling
 import matplotlib.pylab as plt #For interactive plotting
 from shapely.geometry import Point #For the creation of point geometries in geopandas
+import json #For reading in and out of json files (category tree)
+
 
 ############################
 #0.2 Setup in and output paths
@@ -55,6 +57,9 @@ inputfile_venues= foldername_input + '/venues_v2/London_venue_info_v2.csv'
 #File is from 2015, we should get a recent one using the foursquare api:
 #https://developer.foursquare.com/docs/api/venues/categories
 inputfile_cattree= foldername_input + '/category_tree/4sq_category_tree.txt' 
+
+#Juste donwloaded this cattree from the api. 
+inputfile_cattree_json= foldername_input + '/category_tree/4sq_categories.json'
 
 #input shapefile for LSOA level in London
 inputfile_shapefile_LSOA_LD= foldername_input+ '/LSOA_2011_London_gen_MHW/LSOA_2011_London_gen_MHW.shp'
@@ -91,6 +96,46 @@ gp_LSOA_LD = gp_LSOA_LD[['LSOA11CD','geometry']]
 #1.2. Read in category tree
 ############################
 
+
+with open(inputfile_cattree_json, 'r') as f:
+	dict_cattree_json = json.load(f)
+
+#explore structure of dict_cattree_json
+
+list_of_categories=dict_cattree_json['response']['categories']
+#len(list_of_categories)
+#list_of_categories[1].keys() #[u'pluralName', u'name', u'shortName', u'id', u'categories', u'icon']
+
+level1=[]
+level2=[]
+level3=[]
+
+dict_master_cattree={}
+
+for dict_level1 in list_of_categories:
+	#print type (dict_level1) #all dicts
+	#print list_of_ten_dicts[dict_level1].keys() #[u'pluralName', u'name', u'shortName', u'id', u'categories', u'icon']
+	print dict_level1['name']
+	level1.append(dict_level1['name'])
+
+	list_of_categories_from_level1=dict_level1['categories']
+
+	for dict_level2 in list_of_categories_from_level1:
+		print "\t" + dict_level2['name']
+		level2.append(dict_level2['name'])
+		dict_master_cattree[dict_level2['name']]=dict_level1['name']
+
+		list_of_categories_from_level2=dict_level2['categories']
+
+		for dict_level3 in list_of_categories_from_level2:
+			print "\t\t" + dict_level3['name']
+			level3.append(dict_level3['name'])
+			dict_master_cattree[dict_level3['name']]=dict_level2['name']
+
+
+'''
+## We used this part of the code for the old cattree. The newer one is in the dict_cattree.json
+
 #Define helper function
 def getCateTree():
     f = open(inputfile_cattree, 'r')
@@ -123,6 +168,7 @@ def getCateTree():
 
 #get a dict with all the categories.
 dict_cattree = getCateTree()
+'''
 
 
 ########################################################
@@ -153,33 +199,36 @@ print df_V_category_count_minx
 ############################
 
 def category_up(row):
-	#Not all categories are in the dict_cattree. If they are not in the cattree, we keep their names
-	if row['category'] in dict_cattree.keys():
-		text=row['category']
-		text2=text[:-1]
-		up=dict_cattree[row['category']]
+	#Not all categories might be in the dict_master_cattree. If they are not in the cattree, we keep their names
+	#if row['category'].decode('utf-8') in dict_master_cattree.keys():
+
+	if row['category'] in dict_master_cattree.keys():
+		#print row['category']
+		up=dict_master_cattree[row['category']]
+
 
 	#In a lot of cases, the tree says cafe whereas the data says cafes. so we omit the s
-	elif row['category'][:-1] in dict_cattree.keys():
-		up=dict_cattree[row['category'][:-1]]
-		#up='This was a case with one letter differences, an s '
+	elif row['category'][:-1] in dict_master_cattree.keys():
+		#print row['category'][:-1]
+		up=dict_master_cattree[row['category'][:-1]]
+		#print 'This was a case with one letter differences, an s '
 	else:
 		#up=row['category']
+		#print 'this is nan'
 		up='NaN'
+
 	#print up 
 	return up
 
-
 def category_up_up(row):
-	#Not all categories are in the dict_cattree. If they are not in the cattree, we keep their names
-	if row['category_up'] in dict_cattree.keys():
+	#Not all categories are in the dict_master_cattree. If they are not in the cattree, we keep their names
+	if row['category_up'] in dict_master_cattree.keys():
 		text=row['category_up']
-		text2=text[:-1]
-		up_up=dict_cattree[row['category_up']]
+		up_up=dict_master_cattree[row['category_up']]
 
 	#In a lot of cases, the tree says cafe whereas the data says cafes. so we omit the s
-	elif row['category_up'][:-1] in dict_cattree.keys():
-		up_up=dict_cattree[row['category_up'][:-1]]
+	elif row['category_up'][:-1] in dict_master_cattree.keys():
+		up_up=dict_master_cattree[row['category_up'][:-1]]
 		#up='This was a case with one letter differences, an s '
 	else:
 		#up=row['category']
@@ -188,15 +237,14 @@ def category_up_up(row):
 	return up_up
 
 def category_up_up_up(row):
-	#Not all categories are in the dict_cattree. If they are not in the cattree, we keep their names
-	if row['category_up_up'] in dict_cattree.keys():
+	#Not all categories are in the dict_master_cattree. If they are not in the cattree, we keep their names
+	if row['category_up_up'] in dict_master_cattree.keys():
 		text=row['category_up_up']
-		text2=text[:-1]
-		up_up_up=dict_cattree[row['category_up_up']]
+		up_up_up=dict_master_cattree[row['category_up_up']]
 
 	#In a lot of cases, the tree says cafe whereas the data says cafes. so we omit the s
-	elif row['category_up_up'][:-1] in dict_cattree.keys():
-		up_up_up=dict_cattree[row['category_up_up'][:-1]]
+	elif row['category_up_up'][:-1] in dict_master_cattree.keys():
+		up_up_up=dict_master_cattree[row['category_up_up'][:-1]]
 		#up='This was a case with one letter differences, an s '
 	else:
 		#up=row['category']
@@ -205,13 +253,14 @@ def category_up_up_up(row):
 	return up_up_up
 
 #Apply the up, up_up and up_up_up categories
+
 df_V['category_up'] = df_V.apply(category_up, axis=1)
 df_V['category_up_up'] = df_V.apply(category_up_up, axis=1)
 df_V['category_up_up_up'] = df_V.apply(category_up_up_up, axis=1)
 print df_V.head()
 
-#Have a look at occurences - note that 3991 out of 22689 venues 
-#were not categorized at a higher level, that is 17% of the dataset 
+#Have a look at occurences - note that 2929 out of 22689 venues in category_up
+#were not categorized at a higher level, that is 12.9% of the dataset 
 
 #df_V['category_up'].value_counts(sort=True)
 #df_V['category_up_up'].value_counts(sort=True)
@@ -245,9 +294,9 @@ gp_V = gp_V.to_crs({'proj': 'tmerc'})
 ############################
 #3.2 Plot map for one specified category at one specified category_level
 ############################
-
+"""
 category_level='category' #'category','category_up','category_up_up','category_up_up_up'
-category_to_plot='Pubs'
+category_to_plot='NaN'
 
 #define outputfile name and location at which the map will be saved
 #we called this folder individual
@@ -275,7 +324,7 @@ plt.savefig(outputfile, dpi=200, transparent=True, tight_layout=True)
 plt.clf()
 #Close all open pylab windows
 plt.close('ALL')
-
+"""
 
 ############################
 #3.3 Plot map for all categories at one specified categorylevel
@@ -310,12 +359,13 @@ for item in gp_V[category_level].unique():
 	ax.axis('off')
 
 	gp_LSOA_LD.plot(ax=ax, linewidth=0.05, facecolor='#D5E3D8', edgecolor='#111111', alpha=0.8) 
-	gp_V_to_plot.plot(ax=ax, linewidth=0.1, facecolor=cmap(color_counter), edgecolor='#AE4B16', markersize=2)
+	gp_V_to_plot.plot(ax=ax, linewidth=0.1, facecolor='#AE4B16', edgecolor='#AE4B16', markersize=2) #facecolor=cmap(color_counter)
 
-	title_text= 'Locations of venues for category %s at level: %s ' %(category_to_plot,category_level)
-	plt.title(title_text)
+	#title_text= 'Locations of venues for category %s at level: %s ' %(category_to_plot,category_level)
+	title_text= '%s' %(category_to_plot)
+	plt.title(title_text,fontsize=20)
 
-	#plt.tight_layout()
+	plt.tight_layout()
 	#plt.show()
 	#plt.close('ALL')
 	plt.savefig(outputfile, dpi=200, transparent=True, tight_layout=True)
@@ -323,6 +373,5 @@ for item in gp_V[category_level].unique():
 	plt.clf()
 
 	color_counter=color_counter+1
-
 
 
