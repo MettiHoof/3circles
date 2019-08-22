@@ -1,0 +1,22 @@
+HotSpot Analysis
+Data temporal extension
+Min date: 2017-04
+Max date: 2019-03
+
+We have 7,650,994 pairs locations. It has directionality, as you can find in one row Venue_i -> Venue_j and in a diferent row
+Venue_j->Venue_i , i\neq j
+
+We based our HotSpots in the number of check-ins that a pair have during the whole period . First, we group our pairs by
+frequency of ocurrence and them sum the check-ins for each group (see example in notebook), obtaining 4,834,661 pairs.
+As these data have quite a fat tail, we make a subset from all the pairs observed at least 10 times in these 23 months,
+rd the value of sum(check-ins). These gave us a set of 46,686 pairs.
+
+The first ten pairs represents micro-spatial movements, i.e. Venue_i = Venue_j and are Heathrow and main central london train stations. It's until position 11 when we can see an "actual" flow from Harrods to Hyde Park. 
+
+A hotspot pair is one with more than 1000 check-ins (methodology in overleaf but is quite simple) . These gave us a set of 101 venues (movs_freqsGT10.png). As you can see, everything is happenning in Central London and Heathrow. There are some links to train stations and of course, Croydon and Wimbledon are at the top of these outside venues. 
+
+Finally, we defined two types of venues from these Hotspots, Enablers and Receivers. An Enabler venue is draw from the Venue_i subset and ranks high in frequency and sum(check-ins). On the other hand, a Receiver venue also ranks high in the same categories but is draw form venue_j. 
+
+The top ten from these caterories are shown in movs_freqEnRe.png, and they are Heathrow, train stations, Harrods, Picadilly, HydePark, Marble Arch. From these ten, 9 are at the same time Enablers/Receivers; St Pancras is only enabler and Euston is only receiver (we can argue here a bit more expanding this analysis to more venues)
+
+Getting the hotspots by time of the day revels some interestinng patterns beyond the enabler/receiver pov. The morning check-in is done basically at train stations. Some areas are mostly afternoon,night areas, like Kennsigton, while others like Oxford st are fundamentally Midday locations. 

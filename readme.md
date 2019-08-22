@@ -11,13 +11,19 @@ Maarten
 
 The 3circles data can be downloaded from the link sent to you by email
 
+Recap second session: we will be focusing on: 
 
-Jobs to do first: per year.
+1. Getting the recent category tree (Juste)  --Done! 
+2. Sparsing the category tree and adding it to the data --Done , see Metti/data/category_tree
+3. Describing the coverage of some of the first order categories (such as Food) with relation to Natalia's firm dataset. I guess some maps at lsoa or oa will be sufficient? (Natalia)
+4.Transition matrices by seasonality (Antonia: Done! The daily patterns look interesting, there are some differences between cities, in particular Istanbul, Jakarta and Tokyo seems to have their own patterns. To measure how concentrated or dispersed are the matrices could be also interesting! No seasonal patterns).
+5. Movement hotspot analysis (Roberto) - (Done - London). 
+--
+6. "Follow check-ins" (?). I'll explain it at Slack.
 
-1. Map the venues per categories -Maarten
-2. Verify some of the category counts with Natalias data  -Natalia
-3. MSOA level, describe MSOA with distribution of present categories. --Entropy map for the categories -Iacopo 
-4. Transition matrix of the categories, maybe per month? -Antonia, but please, Antonia, do the simple stuff.. 
-5. Transition matrix beween msoa (optional) -Juste
+Considering the writing, there is an overleaf document that lives here: 
+https://www.overleaf.com/7764458452rsrkytpfwzzq
 
-Meeting next week thursday
+Deadline: 22th of may, 4 pages max, figures included. 
+
+
