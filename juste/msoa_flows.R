@@ -131,7 +131,17 @@ computeGraphMeasures <- function(g){
   avgDeg = mean(degs)
   degs = degs[degs>median(degs)]
   alphaDeg = summary(lm(data=data.frame(rank=log(1:length(degs)),deg=log(sort(degs,decreasing = T))),deg~rank))$adj.r.squared
-  return(c(avgDeg=avgDeg,alphaDeg=alphaDeg))
+  # centrality ?
+  bw = betweenness(g,normalized = T)
+  avgBw = mean(bw)
+  bw=bw[bw>0]
+  alphaBw = summary(lm(data=data.frame(rank=log(1:length(bw)),deg=log(sort(bw,decreasing = T))),deg~rank))$adj.r.squared
+  cl = closeness(g,normalized = T)
+  avgCl = mean(cl)
+  alphaCl = summary(lm(data=data.frame(rank=log(1:length(cl)),deg=log(sort(cl,decreasing = T))),deg~rank))$adj.r.squared
+  totalWeight = sum(E(g)$weight)
+  density = 2 * ecount(g) / (vcount(g) * (vcount(g)-1))
+  return(c(totalWeight=totalWeight,density=density,avgDeg=avgDeg,alphaDeg=alphaDeg,avgBw=avgBw,alphaBw=alphaBw,avgCl=avgCl,alphaCl=alphaCl))
 }
 
 measures=c()
@@ -141,15 +151,26 @@ for(month in unique(E(graph)$month)){
   mes = computeGraphMeasures(currentgraph)
   measures=append(measures,c(value=mes['avgDeg'],var='avgDeg',month=month))
   measures=append(measures,c(value=mes['alphaDeg'],var='alphaDeg',month=month))
+  measures=append(measures,c(value=mes['avgBw'],var='avgBw',month=month))
+  measures=append(measures,c(value=mes['alphaBw'],var='alphaBw',month=month))
+  measures=append(measures,c(value=mes['avgCl'],var='avgCl',month=month))
+  measures=append(measures,c(value=mes['alphaCl'],var='alphaCl',month=month))
+  measures=append(measures,c(value=mes['totalWeight'],var='totalWeight',month=month))
+  measures=append(measures,c(value=mes['density'],var='density',month=month))
 }
 
-measuresdf=data.frame()
-names(measures)=c('value','var','month')
-measures$value<- as.numeric(measures$value)
+nindics = 8
 
-g=ggplot(measures,aes(x=month,y=value,color=var,group=var))
-g+geom_point()+geom_line()
+measuresdf=data.frame(value=measures[seq(1,length(measures),by=nindics+1)],
+                      var=measures[seq(2,length(measures),by=nindics+1)],
+                      month=measures[seq(3,length(measures),by=nindics+1)])
+measuresdf$value<- as.numeric(as.character(measuresdf$value))
+measuresdf$month <- as.POSIXct(paste0(measuresdf$month,"-01"))#,origin="1970-01-01")
 
+g=ggplot(measuresdf,aes(x=month,y=value,group=var))
+g+geom_point()+geom_line()+#scale_x_datetime()+
+facet_wrap(~var,scales="free")+stdtheme
+ggsave(file="Results/msoa_networks_indicators.png",width=30,height=25,units="cm")
 
 
 

@@ -1,2 +1,7 @@
+res
+__pycache__
 .tor_tmp
+clientid
+clientsecret
+venues.csv
 
